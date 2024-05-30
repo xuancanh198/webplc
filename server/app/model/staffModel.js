@@ -21,7 +21,16 @@ exports.updateUser = (callback, data, id) => {
         return callback(null, results);
     });
 };
+exports.deleteUser = (callback, id) => {
+    connection.query('DELETE * FROM tbl_user  WHERE id = ?', [id], (error, results) => {
+        if (error) {
+            console.error('Lỗi truy vấn cơ sở dữ liệu: ' + error.stack);
+            return callback(error, null);
+        }
 
+        return callback(null, results);
+    });
+};
 exports.checkUsername = (callback, username, id = null,count=false) => {
     let query = 'SELECT * FROM tbl_user WHERE username = ?';
     let queryParams = [username];

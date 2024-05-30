@@ -91,7 +91,7 @@ export const updateRoomType = (data, id) => {
 };
 export const toggleStatusRoomType = (id) => {
   return (dispatch) => {
-    APILink.put(`room/roomType/toggle/${id}`)
+    APILink.delete(`staff/delete/${id}`)
       .then((response) => {
         if (response.data.status === "success") {
           dispatch(getListRoomType());

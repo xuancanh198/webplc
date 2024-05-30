@@ -6,4 +6,5 @@ const staffController = require('../controller/staff');
 router.get('/', getUserIdFromAccessToken, staffController.getList);
 router.post('/create',getUserIdFromAccessToken,staffController.createAcction);
 router.put('/update/:id',getUserIdFromAccessToken,staffController.updateAcction);
+router.delete('/delete/:id',getUserIdFromAccessToken,staffController.deleteAcction);
 module.exports = router;

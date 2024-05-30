@@ -11,6 +11,7 @@ const statisticalRouter=require('./router/statistical');
 const planService=require('./service/plan');
 const planRouter=require('./router/plan');
 const productRouter=require('./router/product');
+const notificationRouter=require('./router/product');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/staff',staffRouter);

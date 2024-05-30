@@ -9,7 +9,6 @@ exports.getdataStatictical = (callback, time = false, startTime = null, endTime 
         condition = 'AND DATE(t2.date_time) BETWEEN ? AND ?';
         params.push(startTime, endTime);
     }
-    
     if (title === "week") {
         groupBy = 'WEEK(t2.date_time)';
     } else if (title === "month") {

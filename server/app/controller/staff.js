@@ -27,6 +27,7 @@ exports.getList = (req, res) => {
                         categoryNameUser="Nhân viên tạm thời";
                     }
                     return {
+                        id: item.id,
                         username: item.username,
                         fullname: item.fullname,
                         img: item.img,
@@ -147,6 +148,23 @@ exports.updateAcction = (req, res) => {
       
 
     } catch (error) {
+        return res.json({ status: "fail", mess: "có lỗi xảy ra" });
+    }
+}
+exports.deleteAcction = (req, res) => {
+    try {
+        const id = req.param.id
+        console.log(id)
+            staffModel.deleteUser((error, resultsUser) => {
+                if (error) {
+                    return res.status(500).json({ error: 'Database query error' });
+                }
+                return res.json({
+                    status:resultsUser? "success":"fail",
+                    mess: resultsUser?"Xóa thành công":"Xóa thất bại",
+                })
+            },id)
+   } catch (error) {
         return res.json({ status: "fail", mess: "có lỗi xảy ra" });
     }
 }

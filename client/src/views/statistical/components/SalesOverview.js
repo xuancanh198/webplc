@@ -15,7 +15,7 @@
         const [arr,setArr]=useState(null);
         useEffect(()=>{
             callAPI();
-        },[])
+        },[value])
         const handleChange = (event) => {
             const selectedValue = event.target.value;
             if (selectedValue === '7day') {
@@ -23,20 +23,25 @@
                 setValue('7day')
             } else if (selectedValue === '7week') {
                 setTitelStatichcal('7 tuần gần nhất');
+                setValue('7week')
             } else if (selectedValue === '6month') {
                 setTitelStatichcal('6 tháng gần nhất');
+                setValue('6month')
             } else if (selectedValue === 'lastweek') {
                 setTitelStatichcal('Tuần trước');
+                setValue('lastweek')
             } else if (selectedValue === 'weeknow') {
                 setTitelStatichcal('Tuần này');
+                setValue('weeknow')
             }
-            callAPI();
+            // callAPI();
         };
-
+        console.log(value)
         const callAPI =()=>{
             const data={
                 value:value
             }
+            console.log(value)
             APILink.post(`statistical/staticical`,data)
             .then((response) => {
                 console.log(response.data)

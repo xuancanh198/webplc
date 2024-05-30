@@ -65,17 +65,17 @@ exports.getValueId = (callback, id, count = false) => {
 };
 exports.getList = (callback, page = 1, limit = 10, search = null, filter = null) => {
     const offset = (page - 1) * limit;
-    let query = 'SELECT * FROM tbl_plan';
+    let query = 'SELECT * FROM notification';
 
-    const queryParams = [];
-        if (search && search!==null && search.length > 0) {
-        query += ' WHERE creata_at LIKE ?';
-        queryParams.push(`%${search}%`);
-    }
-    if (filter && filter!==null && filter.length > 0) {
-        query += ' AND status = ?';
-        queryParams.push(filter);
-    }
+    // const queryParams = [];
+    //     if (search && search!==null && search.length > 0) {
+    //     query += ' WHERE creata_at LIKE ?';
+    //     queryParams.push(`%${search}%`);
+    // }
+    // if (filter && filter!==null && filter.length > 0) {
+    //     query += ' AND status = ?';
+    //     queryParams.push(filter);
+    // }
     query += ' LIMIT ? OFFSET ?';
     queryParams.push(limit, offset);
 

@@ -5,27 +5,34 @@ const planModel = require('../model/planModel');
 exports.getdataValue = (req, res) => {
     try {
         let valueTime = req.body.value ? req.body.value : "7day";
-
         let startTime, endTime;
         let arrTime = [];
         let arrsp1 = [];
         let arrsp2 = [];
         let arrsp3 = [];
         let arrTong = [];
-
-        if (valueTime === "7day") {
-            endTime = moment().subtract(1, 'days').endOf('day'); // kết thúc 23:59:59 hôm qua
-            startTime = moment().subtract(8, 'days').startOf('day');
-            arrTime = generateDateRange(startTime, endTime);
-        } else if (valueTime === "weeknow") {
-            // Xử lý tuần hiện tại
-        } else if (valueTime === "lastweek") {
-            // Xử lý tuần trước
-        } else if (valueTime === "7week") {
-            // Xử lý 7 tuần gần đây
-        } else if (valueTime === "6month") {
-            // Xử lý 6 tháng gần đây
-        }
+        console.log(valueTime)
+       if (valueTime === "7day") {
+        endTime = moment().subtract(1, 'days').endOf('day'); // Kết thúc 23:59:59 hôm qua
+        startTime = moment().subtract(8, 'days').startOf('day');
+        arrTime = generateDateRange(startTime, endTime);
+    } else if (valueTime === "weeknow") {
+        startTime = moment().startOf('isoWeek'); // Bắt đầu tuần hiện tại (thứ 2)
+        endTime = moment().endOf('isoWeek'); // Kết thúc tuần hiện tại (chủ nhật)
+        arrTime = generateDateRange(startTime, endTime);
+    } else if (valueTime === "lastweek") {
+        startTime = moment().subtract(1, 'weeks').startOf('isoWeek'); // Bắt đầu tuần trước
+        endTime = moment().subtract(1, 'weeks').endOf('isoWeek'); // Kết thúc tuần trước
+        arrTime = generateDateRange(startTime, endTime);
+    } else if (valueTime === "7week") {
+        endTime = moment().endOf('isoWeek'); // Kết thúc tuần hiện tại
+        startTime = moment().subtract(6, 'weeks').startOf('isoWeek'); // Bắt đầu của 7 tuần trước
+        arrTime = generateDateRange(startTime, endTime);
+    } else if (valueTime === "6month") {
+        endTime = moment().endOf('month'); // Kết thúc tháng hiện tại
+        startTime = moment().subtract(5, 'months').startOf('month'); // Bắt đầu của 6 tháng trước
+        arrTime = generateDateRange(startTime, endTime);
+    }
 
         statisticalModel.getdataStatictical((error, results) => {
             if (error) {
