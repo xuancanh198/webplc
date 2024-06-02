@@ -53,6 +53,7 @@ export const updateUser = (data,setFunctions,handleClose,id) => {
   return (dispatch) => {
     APILink.put(`staff/update/${id}`, data)
       .then((response) => {
+        console.log(response.data)
         if (response.data.status === "success") {
           dispatch(getListUser());
           toast.success(response.data.mess);
@@ -63,7 +64,24 @@ export const updateUser = (data,setFunctions,handleClose,id) => {
           // dispatch(toggleModalFun(false));
           // dispatch(deatilDataFun(null));
         }
-        else {
+        else if(response.data.status === "fail"){
+          toast.error(response.data.message)
+        }
+      })
+      .catch((error) => {
+      });
+  }
+};
+
+export const deleteUser= (id) => {
+  return (dispatch) => {
+    APILink.delete(`staff/delete/${id}`)
+      .then((response) => {
+        if (response.data.status === "success") {
+          dispatch(getListUser());
+          toast.success(response.data.mess);
+        }
+        else if(response.data.status === "fail"){
           toast.error(response.data.mess)
         }
       })
@@ -71,6 +89,7 @@ export const updateUser = (data,setFunctions,handleClose,id) => {
       });
   }
 };
+
 export const updateRoomType = (data, id) => {
   return (dispatch) => {
     APILink.put(`room/roomType/update/${id}`, data)
@@ -228,6 +247,7 @@ export const deletePlan = (id) => {
       });
   }
 };
+
 export const exportExcelPlan = () => {
   APILink.get(`plan/list`)
     .then((response) => {

@@ -9,7 +9,7 @@ import {
 import { confirmAlert } from 'react-confirm-alert';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleModalFun, deatilDataFun } from "../../../../../redux/acction/cmsAcction";
-import { toggleStatusRoomType,updatePlan,deletePlan ,exportExcelPlan } from "../../../../../service/callAPI/cmsAPI";
+import { toggleStatusRoomType,updateUser,deleteUser ,exportExcelPlan } from "../../../../../service/callAPI/cmsAPI";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Col from 'react-bootstrap/Col';
@@ -29,11 +29,10 @@ function RoomType(props) {
   const [isUpdate, setIsUpdate] = useState(false);
   const [checked, setChecked] = useState(false);
   const [dataItem, setDataItem] = useState(null);
-  const [username, setUsername] = useState('');
   const [fullname, setfullname] = useState('');
   const [categoryUser, setcategoryUser] = useState('');
   const [address, setaddress] = useState('');
-  const [status, setstatus] = useState(1);
+  const [IsstatusBan, setIsstatusBan] = useState(1);
   const [note, setNote] = useState("");
   const toggelStatus = (id) => {
     confirmAlert({
@@ -55,12 +54,7 @@ function RoomType(props) {
     setShow(!show);
     if(data){
       setDataItem(data)
-      setUsername(data.username);
-      setfullname(data.fullname);
-      setcategoryUser(data.categoryUser);
-      setstatus(data.status);
-      setaddress(data.address)
-      setNote(data.note)
+      setfullname(data.fullname)
     }
  
   }
@@ -69,39 +63,30 @@ function RoomType(props) {
   }
   const openModalToggle = (data) => {
     setShow(true)
-    setDataItem(data)
-  }
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
+    if(data){
+      setDataItem(data)
+      setfullname(data.fullname);
+      setNote(data.note)
+      setaddress(data.address)
     }
-
-  //   setValidated(true);
-  };
+  }
   const updateDataItem=(id)=>{
     const data = {
-      // sp2: sp2,
-      // sp1: sp1,
-      // sp3: sp3,
-      // creata_at: convertTimeFormat(startDate),
-      // note: note
+      fullname:fullname,
+      address: address,
+      note: note
     }
-
-    const setFunctions = {
-      // setSp2,
-      // setNote,
-      // setSp3,
-      // setSp1,
-      // setStartDate
+   const setFunctions = {
+      setfullname,
+      setNote,
+      setaddress,
     };
-   dispatch(updatePlan(data, setFunctions, toggleModelData,id));
+   dispatch(updateUser(data, setFunctions, toggleModelData,id));
   }
   const toggelDelete = (id) => {
     confirmAlert({
-      title: 'Trạng thái',
-      message: 'Bạn có xác nhận cập nhật trạng thái không ?',
+      title: 'Xóa tài khoản người dùng',
+      message: 'Bạn có xác nhận xóa tài khoản người dùng không ?',
       buttons: [
         {
           label: 'Có',
@@ -114,14 +99,33 @@ function RoomType(props) {
       ]
     });
   }
+
+  const toggelBanUser = (id) => {
+    const action = IsstatusBan === 1 ? 'khóa' : 'mở khóa';
+    confirmAlert({
+      title: action + " tài khoản người dùng",
+      message: "Bạn có xác nhận " + action + " tài khoản người dùng không?",
+      buttons: [
+        {
+          label: 'Có',
+          onClick: () => deleteDataItem(id)
+        },
+        {
+          label: 'Không',
+          closeOnClickOutside: true
+        }
+      ]
+    });
+  }
+  
+
   const deleteDataItem = (id) => {
-    dispatch(deletePlan(id));
+    dispatch(deleteUser(id));
   }
   const handleChange = (checked) => {
     setIsUpdate(!isUpdate);
     setChecked(checked)
   };
-  console.log(dataItem);
   return (
     <div>
       {show && show === true ?
@@ -135,10 +139,10 @@ function RoomType(props) {
             <Modal.Title>{isUpdate && isUpdate === true ? "Cập nhật" : "Xem chi tiết"} thông tin người dùng</Modal.Title>
            </Modal.Header>
           <Modal.Body>
-            <Form noValidate validated={validated} onSubmit={handleSubmit}>
+            <Form noValidate validated={validated} onSubmit={() => updateDataItem(dataItem.id)}>
               <Row className="mb-3 flex_center">
                 <div className='mt-2 mb-2 row'>
-                  <div className='flex_center col-10'>
+                  <div className='flex_center col-8'>
                     <label>Xem chi tiết</label>
                     <Switch
                       className='toggle-modal'
@@ -147,30 +151,21 @@ function RoomType(props) {
                     />
                     <label>Cập nhật</label>
                   </div>
-                  <div className='flex_center btn-button col-2' onClick={() => toggelDelete(dataItem.id)}>
+                  <div className='flex_center btn-button col-2 m-2' onClick={() => toggelDelete(dataItem.id)}>
                     <i class="fa-solid fa-trash"></i>
+                  </div>
+                  <div className={`flex_center btn-button col-2 m-2 bg-red ${IsstatusBan === 1 ? 'bd-red' : 'bg-ogren' } `} onClick={() => toggelBanUser(dataItem.id)} >
+                    {IsstatusBan === 1 ? <i class="fa-solid fa-toggle-on"></i> : <i class="fa-solid fa-toggle-off"></i> }
                   </div>
                 </div>
                 <div className='mt-2 mb-2'>
                   <Form.Group as={Col} md="12" >
-                    {isUpdate && isUpdate === true ? (
-                      <React.Fragment>
-                        <Form.Label >Tên đăng nhập</Form.Label>
-                        <Form.Control
-                          required
-                          type="text"
-                          value={username}
-                        />
-                      </React.Fragment>
-                    ) : (
-                      <React.Fragment>
+                  <React.Fragment>
                         <div>
                           <Form.Label className='mg-r-20'>Tên đăng nhập: </Form.Label>
                           {dataItem && dataItem !== null ? dataItem.username : "Không có dữ liệu"}
                         </div>
                       </React.Fragment>
-                    )}
-
                   </Form.Group>
                 </div>
                 <div className='mt-2 mb-2'>
@@ -182,7 +177,9 @@ function RoomType(props) {
                           required
                           type="text"
                           value={fullname}
+                          onChange={(e) => setfullname(e.target.value)}
                         />
+                        
                       </React.Fragment>
                     ) : (
                       <React.Fragment>
@@ -197,6 +194,7 @@ function RoomType(props) {
                 </div>
                 <div className='mt-2 mb-2'>
                   <Form.Group as={Col} md="12" >
+                    {console.log(dataItem.address)}
                     {isUpdate && isUpdate === true ? (
                       <React.Fragment>
                         <Form.Label>Địa chỉ </Form.Label>
@@ -204,6 +202,7 @@ function RoomType(props) {
                           required
                           type="text"
                           value={address}
+                          onChange={(e) => setaddress(e.target.value)}
                         />
                       </React.Fragment>
                     ) : (
@@ -226,7 +225,8 @@ function RoomType(props) {
                         <Form.Control
                           required
                           type="text"
-                          value={note}
+                          value=  {note}
+                          onChange={(e) => setNote(e.target.value)}
                         />
                       </React.Fragment>
                     ) : (
@@ -251,7 +251,7 @@ function RoomType(props) {
                           ) : dataItem.status === 1 ? (
                             "Đang hoạt động"
                           ) : (
-                            "Đã hủy kế hoạch"
+                            "Không có dữ liệu"
                           )
                         ) : (
                           "Không có dữ liệu"

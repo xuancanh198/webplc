@@ -16,6 +16,7 @@ exports.getUserIdFromAccessToken = (req, res, next) => {
             }
             if (results) {
                 if(results.categoryUser ===1){
+                    req.owner = results.id;
                     next();
                 }
                 else{

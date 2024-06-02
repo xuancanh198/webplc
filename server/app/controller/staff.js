@@ -103,67 +103,94 @@ exports.createAcction = (req, res) => {
 }
 exports.updateAcction = (req, res) => {
     try {
-        const id = req.param.id;
-        const username = req.body.username;
+        const id = req.params.id;
+        const owner = req.owner;
         const fullname = req.body.fullname;
-        const role = req.body.role;
-        const img = req.body.img??" ";
+        // const role = req.body.role;
         const address = req.body.address;
         const note = req.body.note;
         const dataUser = {
-            username: username,
             fullname: fullname,
-            img: img,
-            categoryUser: role,
+            // categoryUser: role,
             note: note,
             address: address,
         }
-        staffModel.checkUsername((error, results) => {
+        staffModel.getDetailId((error, resultsId) => {
             if (error) {
                 return res.status(500).json({ error: 'Database query error' });
             }
-            if (results) {
-                return res.json({
-                    status: "fail",
-                    mess: "Tên đăng nhập này đã có vui lòng nhập 1 tên khác",
-                })
-    
-            }
-
-            staffModel.updateUser((error, resultsUser) => {
+            staffModel.getDetailId((error, resultsowner) => {
                 if (error) {
                     return res.status(500).json({ error: 'Database query error' });
                 }
-                if(resultsUser){
-                    return res.json({
-                        status: "success",
-                        mess: "Cập nhật thành công",
-                    })
-        
+                if(resultsowner.id !== 1){
+                    if(resultsId.categoryUser === 1) {
+                        return res.json({
+                            status: "fail",
+                            mess: "Bạn không có quyền cập nhật tài khoản này",
+                        })
+                    }
                 }
-
-            },dataUser)
-           
-        },username,id)
+               staffModel.updateUser((error, resultsUser) => {
+                    if (error) {
+                        return res.status(500).json({ error: 'Database query error' });
+                    }
+                    if(resultsUser){
+                        return res.json({
+                            status: "success",
+                            mess: "Cập nhật thành công",
+                        })
+            
+                    }
+        
+                },dataUser,id)
+               
+        
+            },owner)
+        },id)
       
-
     } catch (error) {
         return res.json({ status: "fail", mess: "có lỗi xảy ra" });
     }
 }
 exports.deleteAcction = (req, res) => {
     try {
-        const id = req.param.id
-        console.log(id)
-            staffModel.deleteUser((error, resultsUser) => {
+        const id = req.params.id;
+        const owner = req.owner;
+        staffModel.getDetailId((error, resultsId) => {
+            if (error) {
+                return res.status(500).json({ error: 'Database query error' });
+            }
+            staffModel.getDetailId((error, resultsowner) => {
                 if (error) {
                     return res.status(500).json({ error: 'Database query error' });
                 }
+                if(resultsowner.id !== 1){
+                    if(resultsId.categoryUser === 1) {
+                        return res.json({
+                            status: "fail",
+                            mess: "Bạn không có quyền xóa tài khoản này",
+                        })
+                    }
+                    staffModel.deleteUser((error, resultsUser) => {
+                        if (error) {
+                            return res.status(500).json({ error: 'Database query error' });
+                        }
+                        return res.json({
+                            status:resultsUser? "success":"fail",
+                            mess: resultsUser?"Xóa thành công":"Xóa thất bại",
+                        })
+                    },id)
+                }
                 return res.json({
-                    status:resultsUser? "success":"fail",
-                    mess: resultsUser?"Xóa thành công":"Xóa thất bại",
+                    status: "fail",
+                    mess: "Tài khoản này không thể xóa xin vui lòng thử lại",
                 })
-            },id)
+              
+            },owner)
+        },id)
+
+          
    } catch (error) {
         return res.json({ status: "fail", mess: "có lỗi xảy ra" });
     }
