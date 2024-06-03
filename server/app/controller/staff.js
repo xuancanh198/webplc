@@ -109,12 +109,22 @@ exports.updateAcction = (req, res) => {
         // const role = req.body.role;
         const address = req.body.address;
         const note = req.body.note;
-        const dataUser = {
-            fullname: fullname,
-            // categoryUser: role,
-            note: note,
-            address: address,
+        const status = req.body.status;
+        console.log(status)
+        let dataUser= null;
+        if([0, 1].includes(status)){
+             dataUser = {
+                status: status,
+            }
+        }else{
+              dataUser = {
+                fullname: fullname,
+                // categoryUser: role,
+                note: note,
+                address: address,
+            }
         }
+       
         staffModel.getDetailId((error, resultsId) => {
             if (error) {
                 return res.status(500).json({ error: 'Database query error' });
@@ -138,7 +148,7 @@ exports.updateAcction = (req, res) => {
                     if(resultsUser){
                         return res.json({
                             status: "success",
-                            mess: "Cập nhật thành công",
+                            mess: status ? (status === 1 ? "khóa người dùng thành công " :" Mở khóa người dùng thành công" ):"Cập nhật thành công",
                         })
             
                     }

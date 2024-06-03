@@ -37,7 +37,7 @@ function RoomType(props) {
   const toggelStatus = (id) => {
     confirmAlert({
       title: 'Trạng thái',
-      message: 'Bạn có xác nhận xóa người dùng không',
+      message: 'Bạn có xác nhận xóa người dùng không ?',
       buttons: [
         {
           label: 'Có',
@@ -58,9 +58,6 @@ function RoomType(props) {
     }
  
   }
-  const toggleStatus = (id) => {
-    dispatch(toggleStatusRoomType(id));
-  }
   const openModalToggle = (data) => {
     setShow(true)
     if(data){
@@ -68,6 +65,7 @@ function RoomType(props) {
       setfullname(data.fullname);
       setNote(data.note)
       setaddress(data.address)
+      setIsstatusBan(data.status)
     }
   }
   const updateDataItem=(id)=>{
@@ -99,7 +97,18 @@ function RoomType(props) {
       ]
     });
   }
-
+  const updateStatusUser=(id)=>{
+    const value = IsstatusBan === 1 ? 0 :1;
+    const data = {
+      status:value,
+    }
+   const setFunctions = {
+      setfullname,
+      setNote,
+      setaddress,
+    };
+   dispatch(updateUser(data, setFunctions, toggleModelData,id));
+  }
   const toggelBanUser = (id) => {
     const action = IsstatusBan === 1 ? 'khóa' : 'mở khóa';
     confirmAlert({
@@ -108,7 +117,7 @@ function RoomType(props) {
       buttons: [
         {
           label: 'Có',
-          onClick: () => deleteDataItem(id)
+          onClick: () => updateStatusUser(id)
         },
         {
           label: 'Không',
