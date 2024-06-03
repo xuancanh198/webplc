@@ -7,4 +7,6 @@ router.get('/', getUserIdFromAccessToken, staffController.getList);
 router.post('/create',getUserIdFromAccessToken,staffController.createAcction);
 router.put('/update/:id',getUserIdFromAccessToken,staffController.updateAcction);
 router.delete('/delete/:id',getUserIdFromAccessToken,staffController.deleteAcction);
+router.get('/excel', getUserIdFromAccessToken, staffController.getListExcel);
+
 module.exports = router;

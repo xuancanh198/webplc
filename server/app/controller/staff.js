@@ -2,7 +2,46 @@ const staffModel = require('../model/staffModel');
 const bcrypt = require('bcryptjs');
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
-
+exports.getListExcel = (req, res) => {
+    try {
+       staffModel.getListExcel((error, results) => {
+            if (error) {
+                return res.status(500).json({ error: 'Database query error' });
+            }
+            if (results) {
+                const arr=results.map((item,index)=>{
+                    let categoryNameUser;
+                    if(item.categoryUser===1){
+                        categoryNameUser="Quản trị viên";
+                    }
+                    else if(item.categoryUser===2){
+                        categoryNameUser="Nhân viên";
+                    }
+                    else if(item.categoryUser===3){
+                        categoryNameUser="Nhân viên tạm thời";
+                    }
+                    return {
+                        id: item.id,
+                        username: item.username,
+                        fullname: item.fullname,
+                        img: item.img,
+                        note: item.note,
+                        address: item.address,
+                        status: item.status,
+                        categoryUser:categoryNameUser,
+                    };
+                })
+                return res.json({
+                    status: "success",
+                    results:arr,
+                })
+    
+            }
+        })
+    } catch (error) { 
+        return res.json({ status: "fail", mess: "có lỗi xảy ra" });
+    }
+}
 exports.getList = (req, res) => {
     try {
        
@@ -10,6 +49,7 @@ exports.getList = (req, res) => {
         const limit = Number(req.query.limit)||10;
         const search = req.query.search||null;
         const fitler = req.query.fitler||null;
+       
        staffModel.getList((error, results) => {
             if (error) {
                 return res.status(500).json({ error: 'Database query error' });

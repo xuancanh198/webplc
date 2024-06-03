@@ -10,7 +10,7 @@ import * as XLSX from 'xlsx';
 export const getListUser = (page=1, limit=10, search=null, fitler=null) => {
   return (dispatch) => {
     const searchParam = search !== null && typeof search === 'string' ? `&search=${search}` : '';
-    const fitterParam = fitler !== null && typeof fitler === 'number' ? `&fitter=${fitler}` : '';
+    const fitterParam = fitler !== null && typeof fitler === 'number' ? `&fitler=${fitler}` : '';
     const apiUrl = `staff/?page=${page}&limit=${limit}${searchParam}${fitterParam}`;
     APILink.get(apiUrl)
       .then((response) => {
@@ -88,6 +88,37 @@ export const deleteUser= (id) => {
       .catch((error) => {
       });
   }
+};
+
+export const exportExcelUser = () => {
+  APILink.get(`staff/excel`)
+    .then((response) => {
+      if (response.data.status === "success") {
+        const data = response.data.results.map((user, index) => ([
+          index + 1,
+          user.id,
+          user.username,
+          user.fullname,
+          user.status=== 1 ? "đang hoạt động" : "Bị khóa",
+          user.note,
+          user.address,
+        ]));
+        
+        data.unshift(["STT", "ID", "Tên đăng nhập", "Họ và tên", "Trạng thái", "Ghi chú", "Địa chỉ"]);
+        
+        const worksheet = XLSX.utils.aoa_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+        
+        XLSX.writeFile(workbook, "Người dùng" + '.xlsx');
+      } else {
+        toast.error(response.data.mess);
+      }
+    })
+    .catch((error) => {
+      console.error('Lỗi khi xuất Excel:', error);
+      toast.error('Có lỗi xảy ra khi xuất Excel');
+    });
 };
 
 export const updateRoomType = (data, id) => {

@@ -9,7 +9,7 @@
     import AddUser from './modal/user/user';
     import "../../../assets/css/cms.css";
     import Form from 'react-bootstrap/Form';
-    import { getListRoomType, getListPlan, getListUser, exportExcelPlan } from "../../../service/callAPI/cmsAPI";
+    import { getListRoomType, getListPlan, getListUser, exportExcelPlan ,exportExcelUser } from "../../../service/callAPI/cmsAPI";
     import 'react-confirm-alert/src/react-confirm-alert.css';
     import ReactPaginate from 'react-paginate';
     import { limitFun, pageFun, updateNameExcelFun } from "../../../redux/acction/cmsAcction";
@@ -76,6 +76,7 @@
 
         const filterChange = (e) => {
             const valueInFun = Number(e.target.value);
+            console.log(valueInFun)
             if (valueInFun !== null) {
                 if (valueInFun === 1 || valueInFun === 0) {
                     setFilterValue(valueInFun)
@@ -111,7 +112,9 @@
                 case 'plan':
                     dispatch(getListPlan(page, limit, searchValue, null , null));
                     break;
-
+                    case 'user':
+                    dispatch(getListUser(page, limit, searchValue, null , null));
+                        break;
                 default:
                     break;
             }
@@ -128,7 +131,9 @@
                 case 'plan':
                     exportExcelPlan();
                     break;
-
+                 case 'user':
+                    exportExcelUser();
+                        break;
                 default:
                     break;
             }
@@ -218,7 +223,7 @@
 
                         </div> : ""
                     }
-                    {/* {filterToggle === false ?
+                    {filterToggle === false ?
                         ""
                         :
                         <div>
@@ -235,7 +240,7 @@
                     
                     }
                     </div>
-                } */}
+                }
 
                 </div>
 

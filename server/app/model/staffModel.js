@@ -55,20 +55,27 @@ exports.checkUsername = (callback, username, id = null,count=false) => {
     });
 };
 
-
 exports.getList = (callback, page = 1, limit = 10, search = null, filter = null) => {
     const offset = (page - 1) * limit;
     let query = 'SELECT * FROM tbl_user';
-
     const queryParams = [];
-        if (search && search!==null && search.length > 0) {
+    let whereClauseAdded = false;
+
+    if (search && search.length > 0) {
         query += ' WHERE username LIKE ? OR fullname LIKE ?';
         queryParams.push(`%${search}%`, `%${search}%`);
+        whereClauseAdded = true;
     }
-    if (filter && filter!==null && filter.length > 0) {
-        query += ' AND categoryUser = ?';
+
+    if (filter && filter.length > 0) {
+        if (whereClauseAdded) {
+            query += ' AND status = ?';
+        } else {
+            query += ' WHERE status = ?';
+        }
         queryParams.push(filter);
     }
+
     query += ' LIMIT ? OFFSET ?';
     queryParams.push(limit, offset);
 
@@ -110,5 +117,16 @@ exports.getDetailId = (callback, id) => {
             return callback(null, results[0]);
         }
         return callback(null, false);
+    });
+};
+
+exports.getListExcel = (callback) => {
+
+    connection.query('SELECT * FROM tbl_user', (error, results) => {
+        if (error) {
+            console.error('Lỗi truy vấn cơ sở dữ liệu: ' + error.stack);
+            return callback(error, null);
+        }
+        return callback(null, results);
     });
 };
